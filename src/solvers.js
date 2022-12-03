@@ -63,18 +63,18 @@ window.countNRooksSolutions = function(n) {
 
 // return a matrix (an array of arrays) representing a single nxn chessboard, with n queens placed such that none of them can attack each other
 window.findNQueensSolution = function(n, board) {
-  var solutionCount = 0; //fixme
+  var solutionCount = []; //fixme
   var board = new Board({n: n});
 
   var helper = function(board, row) {
     if (row === n) {
-      //var currentMatrix = JSON.parse(JSON.stringify(prevMatrix));
-      solutionCount++;
-      // solutionCount.push(currentMatrix);
+      var currentMatrix = JSON.parse(JSON.stringify(board.rows()));
+      // solutionCount++;
+      solutionCount.push(currentMatrix);
     } else {
-      for (var i = 0; i < n; i++) {
+      for (var i = 0; i < n && solutionCount.length < 1; i++) {
         board.togglePiece(row, i);
-        if (!board.hasAnyRooksConflicts()) {
+        if (!board.hasAnyQueensConflicts()) {
           helper(board, row + 1);
         }
         board.togglePiece(row, i);
@@ -83,14 +83,38 @@ window.findNQueensSolution = function(n, board) {
   };
 
   helper(board, 0);
-  console.log('Number of solutions for ' + n + ' rooks:', solutionCount);
-  return solutionCount;
+  console.log('Number of solutions for ' + n + ' queens:', solutionCount[0]);
+  if (solutionCount[0] === undefined) {
+    return new Board({n: n}).rows();
+  }
+  return solutionCount[0];
 };
 
 // return the number of nxn chessboards that exist, with n queens placed such that none of them can attack each other
 window.countNQueensSolutions = function(n) {
-  var solutionCount = undefined; //fixme
+  var solutionCount = []; //fixme
+  var board = new Board({n: n});
 
-  console.log('Number of solutions for ' + n + ' queens:', solutionCount);
-  return solutionCount;
+  var helper = function(board, row) {
+    if (row === n) {
+      var currentMatrix = JSON.parse(JSON.stringify(board.rows()));
+      // solutionCount++;
+      solutionCount.push(currentMatrix);
+    } else {
+      for (var i = 0; i < n; i++) {
+        board.togglePiece(row, i);
+        if (!board.hasAnyQueensConflicts()) {
+          helper(board, row + 1);
+        }
+        board.togglePiece(row, i);
+      }
+    }
+  };
+
+  helper(board, 0);
+  console.log('Number of solutions for ' + n + ' queens:', solutionCount.length);
+  if (solutionCount[0] === undefined) {
+    return 0;
+  }
+  return solutionCount.length;
 };
